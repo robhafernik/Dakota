@@ -1,7 +1,7 @@
 # Dakoda weather and data display
 # Using PyPortal hardware from Adafruit, http://www.adafruit.com,
 #   and SCD-30 CO2/temp/humidity sensor, also from Adafruit
-# Based on example code from Adafruit mixed with Rob's silly Python code
+# Based on example code from Adafruit mixed with Rob's silly CircuitPython code
 #
 # Written: summer 2022 by Rob
 #
@@ -16,7 +16,6 @@ import gc
 import adafruit_scd30
 import adafruit_requests as requests
 import adafruit_esp32spi.adafruit_esp32spi_socket as socket
-# from adafruit_display_text import label
 from adafruit_display_text import bitmap_label
 from adafruit_bitmap_font import bitmap_font
 from adafruit_esp32spi import adafruit_esp32spi
@@ -129,23 +128,40 @@ def main_loop( esp ):
 	while True:
 		loop_count = loop_count + 1
 
+		# assume failure
+		Data['temp'] = "--"
+		Data['humidity'] = "--"
+		Data['pressure'] = "--"
+		Data['uv_index'] = "--"
+		Data['conditions'] = "--"
+		Data['wind_dir'] = 0
+		Data['wind_speed'] = 0
+		Data['sunrise'] = 0
+		Data['sunset'] = 0
+		Data['weather_alert'] = 'NoAlert'
+		Data['local_time_correction'] = 0
+		Data['weather_status_code'] = 0
+		Data['aq_index'] = 0
+		Data['aqi_status_code'] = 0
+
 		# time in secs
 		Tick = time.time()
 
 		print("\n########## Top of loop ", loop_count)
 
+
 		# Connect to wifi
 		print("* Checking connection")
+
 		Data['connected'] = False
-		while not esp.is_connected:
-		    try:
+		if not esp.is_connected:
+			try:
 				esp.connect_AP(secrets["ssid"], secrets["password"])
+			except Exception as e:
+				print("!!!! Exception connecting to WiFi: " + e)
 
-				print("Connected to", str(esp.ssid, "utf-8"), "\tRSSI:", esp.rssi)
-				print("IP address", esp.pretty_ip(esp.ip_address), "\n")
-
-		    except OSError as e:
-				print("!!!! Could not connect to AP:", e, "\n")
+			print("Connected to", str(esp.ssid, "utf-8"), "\tRSSI:", esp.rssi)
+			print("IP address", esp.pretty_ip(esp.ip_address), "\n")
 
 		# if connection was established then do stuff
 		if esp.is_connected:
@@ -186,20 +202,6 @@ def main_loop( esp ):
 
 def get_weather( esp, Data ):
 	print("***** Getting Weather")
-
-	# assume it will fail
-	Data['temp'] = "--"
-	Data['humidity'] = "--"
-	Data['pressure'] = "--"
-	Data['uv_index'] = "--"
-	Data['conditions'] = "--"
-	Data['wind_dir'] = 0
-	Data['wind_speed'] = 0
-	Data['sunrise'] = 0
-	Data['sunset'] = 0
-	Data['weather_alert'] = 'NoAlert'
-	Data['local_time_correction'] = 0
-	Data['weather_status_code'] = 0
 
 	weather_response = requests.get(OPEN_WEATHER_URL)
 
@@ -256,10 +258,6 @@ def get_weather( esp, Data ):
 
 def get_air_quality(esp, Data):
 	print("***** Getting Air Quality")
-
-	# assume it won't work
-	Data['aq_index'] = 0
-	Data['aqi_status_code'] = 0
 
 	aqi_response = requests.get(OPEN_WEATHER_AQI_URL)
 

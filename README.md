@@ -14,7 +14,7 @@ junk pile, I found a box perfectly suited for this project.  I don't know where 
 came from our how it made it into the pile.  It had the word Dakota embossed in the 
 steel, so there you go.
 
-This project fonts from **Google Fonts**, an repository of open source fonts.  These have 
+This project fonts from **Google Fonts** at https://fonts.google.com  This is a repository of open source fonts.  These have 
 been turned into bitmap fonts using the **FontForge** app. See https://fontforge.org/en-US/
 
 The libraries in the **lib** folder are open source from Adafruit and I'm not sure on the propriety 
