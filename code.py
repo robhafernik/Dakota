@@ -46,7 +46,6 @@ def main_loop( esp ):
 	Last_Sensor_Read = 0
 
 	# create the UI elements just once
-
 	lstr = "--"
 
 	# temperature
@@ -128,22 +127,6 @@ def main_loop( esp ):
 	while True:
 		loop_count = loop_count + 1
 
-		# assume failure
-		Data['temp'] = "--"
-		Data['humidity'] = "--"
-		Data['pressure'] = "--"
-		Data['uv_index'] = "--"
-		Data['conditions'] = "--"
-		Data['wind_dir'] = 0
-		Data['wind_speed'] = 0
-		Data['sunrise'] = 0
-		Data['sunset'] = 0
-		Data['weather_alert'] = 'NoAlert'
-		Data['local_time_correction'] = 0
-		Data['weather_status_code'] = 0
-		Data['aq_index'] = 0
-		Data['aqi_status_code'] = 0
-
 		# time in secs
 		Tick = time.time()
 
@@ -203,6 +186,19 @@ def main_loop( esp ):
 def get_weather( esp, Data ):
 	print("***** Getting Weather")
 
+	Data['temp'] = "--"
+	Data['humidity'] = "--"
+	Data['pressure'] = "--"
+	Data['uv_index'] = "--"
+	Data['conditions'] = "--"
+	Data['wind_dir'] = 0
+	Data['wind_speed'] = 0
+	Data['sunrise'] = 0
+	Data['sunset'] = 0
+	Data['weather_alert'] = 'NoAlert'
+	Data['local_time_correction'] = 0
+	Data['weather_status_code'] = 0
+
 	weather_response = requests.get(OPEN_WEATHER_URL)
 
 	Data['weather_status_code'] = weather_response.status_code
@@ -250,7 +246,7 @@ def get_weather( esp, Data ):
 				Data['weather_alert'] = alert
 
 		except Exception as e:
-			print("Weather API", e)
+			print("      Weather API exception", e)
 
 	weather_response.close()
 
@@ -258,6 +254,9 @@ def get_weather( esp, Data ):
 
 def get_air_quality(esp, Data):
 	print("***** Getting Air Quality")
+
+	Data['aq_index'] = 0
+	Data['aqi_status_code'] = 0
 
 	aqi_response = requests.get(OPEN_WEATHER_AQI_URL)
 
@@ -273,7 +272,7 @@ def get_air_quality(esp, Data):
 				aqi_index = rjson['list'][0]['main']['aqi']		
 				Data['aq_index'] = int(aqi_index)
 		except Exception as e:
-			print("Air Quality API", e)
+			print("      Air Quality API exception", e)
 
 	aqi_response.close()
 
@@ -447,6 +446,7 @@ def set_warning_level(warn):
 
 # correct local time and get display strings 
 def set_now(Data):
+	print("* Wrangling time")
 
 	# correct local clock to internet clock
 	local_time_correction = int(Data['local_time_correction'])
@@ -569,6 +569,7 @@ def get_moon_phase(Data):
 	return mp;
 
 def set_flex(Data):		# flex line is informative, but also fun
+	print("* Setting Flex line")
 
 	flex_str = "--"
 	flex_color = DEFAULT
@@ -583,29 +584,37 @@ def set_flex(Data):		# flex line is informative, but also fun
 	if connected == False:
 		flex_str = "NO INTERNET CONNECTION"
 		flex_color = VERY_BAD
+
 	elif Data['weather_alert'] != "NoAlert":
 		# weather alerts are a big deal, safety-wise
 		flex_str = alert_str
 		flex_color = BAD
+
 	elif Data['month'] == "May" and Data['day_of_month'] == "28":
 		# birthdays are special
 		flex_str = "Happy birthday PATRICIA!!"
 		flex_color = FAIR
+
 	elif Data['weather_status_code'] != 200:
 		flex_str = "Weather API response: " + Data['weather_status_code']
 		flex_color = MODERATE
+
 	elif Data['aqi_status_code'] != 200:
 		flex_str = "Air Quality API response: " + Data['aqi_status_code']
 		flex_color = MODERATE
+
 	elif sunrise != None:
 		flex_str = sunrise
 		flex_color = MODERATE
+
 	elif sunset != None:
 		flex_str = sunset
 		flex_color = MODERATE
+
 	elif moon_phase != None:
 		flex_str = moon_phase
 		flex_color = MODERATE
+
 	else:
 		# if nothing else, do wind speed and pressure (color is default)
 		try:
@@ -622,6 +631,7 @@ def set_flex(Data):		# flex line is informative, but also fun
 
 	Data['flex_string'] = flex_str
 	Data['flex_color'] = flex_color
+
  	return;
 
 # ================================================================
