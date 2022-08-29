@@ -101,21 +101,7 @@ Also, a given set of colors may not display quite the same on another device, ev
 Obviously, if these don't look good to you, then use ones that do.  Also, I'm not a graphic designer, so my
 colors may not harmonize in ways that designers like.
 
-### OpenWeatherMap
-
-The program uses the OpenWeatherMap APIs for weather and air quality information:
-
-https://openweathermap.org
-
-This is a wonderfull resource for weather information.  This code uses a paid API (although the payment only 
-amounts to $2 or $3 per month), but it is perfectly possible to do similar things with completely free
-information.  The APIs are clear, easy to call and well documented.  I *have* found that UV Index and 
-Air Quality Index don't seem particularly meticulous, but I'm not a meteorologist, so what do I know?
-
-Visit their website and follow the instructions to get an API Token.  This is a string of text you wlll 
-need to add to your secrets.py file.
-
-### Main Loop
+**Main Loop**
 
 Each source of data for the program is obtained on its own schedule.  For example, the weather API is
 called every WEATHER_FREQ seconds (currently 601, or about 10 minutes).  The code keeps a counter, called 
@@ -134,6 +120,20 @@ Each time through the main loop, the code does the following:
 * Work out the Local Time, based on data from the OpenWeather API
 * Decide what to show in the extra, or "flex" line of the display
 * Show all of the data on the screen
+
+### OpenWeatherMap
+
+The program uses the OpenWeatherMap APIs for weather and air quality information:
+
+https://openweathermap.org
+
+This is a wonderfull resource for weather information.  This code uses a paid API (although the payment only 
+amounts to $2 or $3 per month), but it is perfectly possible to do similar things with completely free
+information.  The APIs are clear, easy to call and well documented.  I *have* found that UV Index and 
+Air Quality Index don't seem particularly meticulous, but I'm not a meteorologist, so what do I know?
+
+Visit their website and follow the instructions to get an API Token.  This is a string of text you wlll 
+need to add to your secrets.py file.
 
 ### Resiliency
 
