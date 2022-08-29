@@ -78,12 +78,17 @@ only in the file system of the device.
 
 All of the data collected from APIs and sensors is stored in a single Dictionary (also known as an associative array) called
 Data.  Updating each type of data updates the map.  When it's time to draw the display, the
-Data map supplies all of the information.  This means that the APIs or sensors can be
-swapped out withut major change to the code.  As long as they update the map with the
+Data dictionary supplies all of the information.  This means that the APIs or sensors can be
+swapped out withut major change to the code.  As long as they update the dictionary with the
 same data, the display of the data is unchanged.  Conversely, changes to the design of 
 the UI will not change the way that data is collected.  It's probably not "pythonic" to 
 do it this way, but I'm old and set in my ways and that means a clear dividing line between
-data and its respresentation.
+data and its display.
+
+A number of colors, such as "MODERATE" are used in the code.  I've found tha these are very subjective.
+Also, a given set of colors may not display quite the same on another device, even of the same manufacture.  
+Obviously, if these don't look good to you, then use ones that do.  I'm not a graphic designer, so my
+colors may not harmonize in ways that designers like.
 
 ### OpenWeatherMap
 
