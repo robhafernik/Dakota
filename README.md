@@ -24,7 +24,7 @@ putting them here is the only way to make a downloadable project bundle.
 
 ## Why?
 
-So why work on a device that does nothing that a phone won't do?  Fair question.  Short hacker answer: 
+So why work on a device that does nothing that a smart phone won't do?  Fair question.  Short hacker answer: 
 because we can. There are other reasons, however. A person doesn't always have their phone on hand.  
 The target location for this device is the  
 bathroom of our house, where we've had one version or another of this device for several years.  When you
@@ -75,6 +75,15 @@ file system of the device.  This file is imported by the main file to get "secre
 WiFi password and other configuration.  A dummy of this file with no secrets is saved in the code
 directory. This keeps the secrets from getting checked in to GitHub.   The real secrets file lives
 only in the file system of the device.
+
+All of the data collected from APIs and sensors is stored in a single Map called
+Data.  Updating each type of data updates the map.  When it's time to draw the display, the
+Data map supplies all of the information.  This means that the APIs or sensors can be
+swapped out withut major change to the code.  As long as they update the map with the
+same data, the display of the data is unchanged.  Conversely, changes to the design of 
+the UI will not change the way that data is collected.  It's probably not "pythonic" to 
+do it this way, but I'm old and set in my ways and that means a clear dividing line between
+data and its respresentation.
 
 ### OpenWeatherMap
 
