@@ -76,7 +76,7 @@ WiFi password and other configuration.  A dummy of this file with no secrets is 
 directory. This keeps the secrets from getting checked in to GitHub.   The real secrets file lives
 only in the file system of the device.
 
-All of the data collected from APIs and sensors is stored in a single Map called
+All of the data collected from APIs and sensors is stored in a single Dictionary (also known as an associative array) called
 Data.  Updating each type of data updates the map.  When it's time to draw the display, the
 Data map supplies all of the information.  This means that the APIs or sensors can be
 swapped out withut major change to the code.  As long as they update the map with the
