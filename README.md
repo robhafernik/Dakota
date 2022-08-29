@@ -1,11 +1,12 @@
 
 # Dakoda
+
 ## Weather and Data Display
 
 Uses Titano hardware from Adafruit, http://www.adafruit.com,
 along with an SCD-30 CO2/temp/humidity sensor, also from Adafruit.
 
-Based on example code from Adafruit mixed with Rob's silly CIRCUTPYTHON code.
+Based on example code from Adafruit mixed with Rob's silly CircuitPython code.
 
 **Written: summer 2022 by Rob**, rob@hafernik.com
 
@@ -41,7 +42,7 @@ Long experience with similar devices have informed the design of this one.  Ther
 - Inside conditions should include temperature, humidity and CO2 count
 - One extra line in the display should present different facts at different times, such as wind speed and direction,
 weather alerts, connectivity issues and so on.
-- All data lines should be color coded such as general status (good, medium, bad) can be read at a distance.
+- All data lines should be color coded such that general status (good, medium, bad) can be read at a distance.
 
 These requirements led to the display you see in the project photos.
 
@@ -54,22 +55,22 @@ https://www.adafruit.com/product/4444
 The Titano uses an ATMEL (Microchip) ATSAMD51J20, and an 
 Espressif ESP32 Wi-Fi coprocessor with TLS/SSL support built-in. It has a 3.5″ diagonal 320 x 480 
 color TFT with resistive touch screen (the touch screen is not used in this project).  It can be programmed
-in CIRCUITPYTHON, Adafruit's embedded Python environment.
+in CircuitPython, Adafruit's embedded Python environment.
 
 Also in this project is Adafruit's SCD-30 CO2/Temperature/Humidity sensor.
 
 https://www.adafruit.com/product/4867
 
 This is a nice (although somewhat expensive) sensor that measures CO2 directly and not by proxy.  Adafruit
-easy to interface over I2C and easy to use in CIRCUITPYTHON code.
+makes it easy to interface over I2C and easy to use in CircuitPython code.
 
 ## Theory of Operation
 
 The code runs a loop every MAIN_SLEEP seconds (currently 10 seconds).  This means that the time displayed
 (which is only hours and minutes) may be off by as much as MAIN_SLEEP seconds, but that is deemed OK for 
-this particular application.
+this particular application (it only shows hours and minutes anyway).
 
-A pattern is followed that is common with CIRCUITPYTHON: a "secrets.py" file is installed in the 
+A pattern is followed that is common with CircuitPython: a "secrets.py" file is installed in the 
 file system of the device.  This file is imported by the main file to get "secrets", such as the
 WiFi password and other configuration.  A dummy of this file with no secrets is saved in the code
 directory. This keeps the secrets from getting checked in to GitHub.   The real secrets file lives
@@ -84,6 +85,9 @@ https://openweathermap.org
 This is a wonderfull resource for weather information.  This code uses a paid API (although the payment only 
 amounts to $2 or $3 per month), but it is perfectly possible to do similar things with completely free
 information.  The APIs are clear, easy to call and well documented.
+
+Visit their website and follow the instructions to get an API Token.  This is a string of text you wlll 
+need to add to your secrets.py file.
 
 ### Main Loop
 
@@ -117,5 +121,6 @@ bugs to be fixed.
 
 ## License
 
+Released under MIT license, see license file in repository.
 
 
