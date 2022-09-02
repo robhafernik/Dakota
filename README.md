@@ -3,7 +3,7 @@
 
 ## Weather and Data Display
 
-Uses Titano hardware from Adafruit, http://www.adafruit.com,
+Uses Titano PyPortal hardware from Adafruit, http://www.adafruit.com,
 along with an SCD-30 CO2/temp/humidity sensor, also from Adafruit.
 
 Based on example code from Adafruit mixed with Rob's silly CircuitPython code.
@@ -12,7 +12,7 @@ Based on example code from Adafruit mixed with Rob's silly CircuitPython code.
 
 This project gets its name from the container I used to house it.  Looking through my
 junk pile, I found a box perfectly suited for this project.  I don't know where it 
-came from our how it made it into the pile.  It had the word Dakota embossed in the 
+came from our how it made it into the pile.  It had the word "Dakota" embossed in the 
 steel, so there you go.
 
 This project uses fonts from **Google Fonts** at https://fonts.google.com  This is a repository of open source fonts.  These have 
@@ -25,9 +25,9 @@ putting them here is the only way to make a downloadable project bundle.
 ## Why?
 
 So why work on a device that does nothing that a smart phone won't do?  Fair question.  Short hacker answer: 
-because we can. There are other reasons, however. A person doesn't always have their phone on hand.  
+because I can. There are other reasons, however. A person doesn't always have their phone on hand.  
 The target location for this device is the bathroom of our house, where we've had one version or another 
-of this device for several years.  When you get up in the morning or middle of the night, you don't have 
+of this device for several years and found it to be very helpful.  When you get up in the morning or middle of the night, you don't have 
 our phone in your hand.  It's also a gentile nightlight.  In addition, it was a good way to stretch my hardware and 
 programming skills.  Lastly, it's an excercise in UI/UX design.  So, plenty of *why*.
 
@@ -35,7 +35,7 @@ programming skills.  Lastly, it's an excercise in UI/UX design.  So, plenty of *
 
 Long experience with similar devices have informed the design of this one.  There are a few requirements:
 
-- Time and temperature must be readable across the room and distinct from each other
+- Time and temperature must be readable across the room (and from the shower) and distinct from each other
 - Relative humidity and outside conditions should be clear and eaay to read
 - UV index and Air Quality Index should be presented as human-readable strings, not numbers or codes
 - Day of the week and month should be apparent
@@ -46,13 +46,22 @@ weather alerts, connectivity issues and so on.
 
 These requirements led to the display you see in the project photos.
 
+The Titano PyPortal has a Neopixel LED on the back.  Since this project has an enclosure, I wasn't
+sure how to use it.  However, it turned out that the case is pretty reflective and the glow of the 
+LED leaks around to the front.  To use this, I set the LED to yellow for a situation where Dakota 
+isn't connected to the internet and red if there is a weather alert (which also displays on the LCD).
+
+The backlight is set to the minimum I could set it to (lower values seem to turn it off altogether) when 
+the light sensor detects dim light.  When it's not dim, the backlight is set to a moderately high value.  
+This works better than I expected.
+
 ## Hardware
 
 This project uses the **Titano** board from Adafruit.  
 
 https://www.adafruit.com/product/4444
 
-The Titano uses an ATMEL (Microchip) ATSAMD51J20, and an 
+The Titano PyPortal uses an ATMEL (Microchip) ATSAMD51J20, and an 
 Espressif ESP32 Wi-Fi coprocessor with TLS/SSL support built-in. It has a 3.5" diagonal 320 x 480 
 color TFT with resistive touch screen (the touch interface is not used in this project).  It can be programmed
 in CircuitPython, Adafruit's embedded Python environment.
@@ -109,7 +118,7 @@ Tick, which is the Python time.time() result, which returns the hardware clock's
 since startup.  Each function keeps a counter and when the value of Tick exceeds the counter, it's 
 time to perform the function.  The interval for each function is a prime number, meaning that the 
 various function calls will very rarely line up and cause two functions to be performed in one loop.
-This is a totally unnecessary frill.
+This is a totally unnecessary frill, but I like primes.
 
 Each time through the main loop, the code does the following:
 
