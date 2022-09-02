@@ -755,7 +755,7 @@ DAY_OF_WEEK = [ "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 MONTH_ABBR = [ "--", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ]
 
 # Neopixel warning colors
-ALLGOOD = (0, 0, 0) 
+ALLGOOD = (0, 0, 0)				# for the neopixel "all good" is "off"
 YELLOW_ALERT = (128, 128, 0) 
 RED_ALERT = (128, 0, 0)
 RED_RED_ALERT = (240, 64, 64)
