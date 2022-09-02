@@ -61,7 +61,7 @@ def main_loop( esp ):
 	Data['humidity_label'] = hum_label
 
 	# conditions
-	cond_label = bitmap_label.Label(MedFont, text=lstr, color=GRAY)
+	cond_label = bitmap_label.Label(MedFont, text=lstr, color=DEFAULT)
 	cond_label.anchor_point = (0.0, 1.0)
 	cond_label.anchored_position = (204, 62)
 	Data['cond_label'] = cond_label
@@ -219,6 +219,7 @@ def get_weather( esp, Data ):
 			local_time_correction = local_unix_time - time.time()
 			Data['local_time_correction'] = local_time_correction
 
+			# get all the other weather stuff
 			Data['temp'] = round(convert_ktof(float(current['temp'])))
 			Data['humidity'] = round(current['humidity'])
 			Data['pressure'] = round(current['pressure'])
@@ -231,7 +232,11 @@ def get_weather( esp, Data ):
 			Data['sunset'] = local_sunset_time
 			Data['moon_phase'] = float(daily['moon_phase'])
 
-			Data['conditions'] = current["weather"][0]["main"]
+			# upper case the condition string (CircuitPython has no "capitalize()")
+			# 	strangely, this is a UI issue, the upper cased string actually helps
+			c_str = current["weather"][0]["description"]
+			cond_str = c_str[0].upper() + c_str[1:].lower()
+			Data['conditions'] = cond_str	
 
 			Data['wind_dir'] = get_wind_dir_str(int(current['wind_deg']))
 			Data['wind_speed'] = convert_mpstomph(int(current['wind_speed']))
@@ -246,7 +251,7 @@ def get_weather( esp, Data ):
 				Data['weather_alert'] = alert
 
 		except Exception as e:
-			print("      Weather API exception", e)
+			print("      Weather API exception:", e)
 
 	weather_response.close()
 
@@ -323,7 +328,7 @@ def convert_ctof(c):
 	return f;
 
 def convert_mpstomph(mps):
-	mphstr = str(round(mps * 2.237))
+	mphstr = round(mps * 2.237)
 	return mphstr;
 
 def get_wind_dir_str(wind_dir):
@@ -423,6 +428,18 @@ def get_aqi_color(aqi):
 		print("    > No AQI color")
 
 	return aqi_color;
+
+def get_humidity_color(hum):
+	hum_color = DEFAULT
+
+	if hum<30:
+		hum_color = GOOD
+	elif hum>80:
+		hum_color = MODERATE
+	elif hum>90:
+		hum_color = BAD
+
+	return hum_color;
 
 def set_warning_led(Data):
 	# check for weather alert
@@ -621,13 +638,15 @@ def set_flex(Data):		# flex line is informative, but also fun
 			pressure = Data['pressure']
 			wind_speed = Data['wind_speed']
 			wind_dir = Data['wind_dir']
-			if wind_speed == "0" or wind_speed == "1" or wind_speed == "2":
+
+			if wind_speed < 3:
 				flex_str = "Winds calm"
 			else:
-				flex_str = wind_dir + " winds " + " at " + wind_speed + "mph"
+				flex_str = wind_dir + " winds " + " at " + str(wind_speed) + "mph"
 			flex_str  = flex_str + ", " + str(pressure) + "mb"
+
 		except Exception as e:
-			print("    > No wind speed, wind direction or pressure")
+			print("    > No wind speed, wind direction or pressure:", e)
 
 	Data['flex_string'] = flex_str
 	Data['flex_color'] = flex_color
@@ -646,14 +665,16 @@ def draw_display(Data):
 	temp_label.text = str(tval)
 
 	# humidity
-	hstr = str(Data['humidity']) + "%"
+	hum = Data['humidity']
+	hstr = str(hum) + "%"
 	hum_label = Data['humidity_label']
 	hum_label.text = hstr
+	hum_label.color = get_humidity_color(hum)
 
 	# conditions
 	cstr = Data['conditions']
 	cond_label = Data['cond_label']
-	cond_label.color = GRAY
+	cond_label.color = DEFAULT
 	cond_label.text = cstr
 
 	# date and time
@@ -715,8 +736,9 @@ LONGITUDE = secrets['Longitude']
 
 OPEN_WEATHER_URL = "http://api.openweathermap.org/data/3.0/onecall?lat="+LATITUDE+"&lon="+LONGITUDE+"&exclude=hourly,minutely&appid="+WEATHER_API_KEY
 OPEN_WEATHER_AQI_URL = "http://api.openweathermap.org/data/2.5/air_pollution?lat="+LATITUDE+"&lon="+LONGITUDE+"&appid="+WEATHER_API_KEY
+
 MAIN_SLEEP = 10   			# how much to sleep in main loop, secs
-EXCEPTION_SLEEP = 60		# how much to sleep in exception loop (when things are failing badly), secs
+EXCEPTION_SLEEP = 20		# how much to sleep in exception loop (when things are failing badly), secs
 
 # these constants have to do with how often we do things (like ask for weather data from internet)
 # prime numbers so they won't match up very often...
@@ -798,5 +820,9 @@ while True:
 	except Exception as e:
 		print ("!!!! Dakota main_loop threw exception: ", e )
 		print(type(e))
+		print("Retry...")
 
 	time.sleep(EXCEPTION_SLEEP)
+
+print("Dakota Done")
+
